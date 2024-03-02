@@ -1,5 +1,3 @@
-@file:OptIn(ExperimentalMaterial3Api::class)
-
 package com.example.item_calculator.ui.components
 
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -19,6 +17,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import com.example.item_calculator.R
 import com.example.item_calculator.ui.theme.ItemCalculatorTheme
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun CustomTopAppBar(
     modifier: Modifier = Modifier,
@@ -50,6 +49,7 @@ fun CustomTopAppBar(
     )
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Preview(showBackground = true)
 @Composable
 private fun CustomTopAppBarPreview() {
