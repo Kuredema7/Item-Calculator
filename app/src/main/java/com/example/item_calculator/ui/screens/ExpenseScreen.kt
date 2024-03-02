@@ -42,7 +42,8 @@ object ExpenseDestination : NavigationDestination {
 fun ExpenseScreen(
     onNavigateUp: () -> Unit,
     data: String,
-    expenseViewModel: ExpenseViewModel = viewModel()
+    expenseViewModel: ExpenseViewModel = viewModel(),
+    onCalculate: () -> Unit
 ) {
     val expenseUiState by expenseViewModel.uiState.collectAsState()
 
@@ -66,7 +67,8 @@ fun ExpenseScreen(
                 modifier = Modifier
                     .padding(dimensionResource(R.dimen.medium_padding)),
                 expenseUiState = expenseUiState,
-                onValueChange = expenseViewModel::onExpenseChange
+                onValueChange = expenseViewModel::onExpenseChange,
+                onClick = onCalculate
             )
         }
     }
@@ -76,7 +78,8 @@ fun ExpenseScreen(
 private fun ExpenseBody(
     modifier: Modifier = Modifier,
     expenseUiState: ExpenseUiState,
-    onValueChange: (String) -> Unit
+    onValueChange: (String) -> Unit,
+    onClick: () -> Unit,
 ) {
     Column(
         modifier = modifier,
@@ -101,13 +104,13 @@ private fun ExpenseBody(
                 .padding(dimensionResource(R.dimen.medium_padding)),
         )
         Button(
-            onClick = { },
+            onClick = onClick,
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(dimensionResource(R.dimen.medium_padding)),
             shape = MaterialTheme.shapes.medium
         ) {
-            Text(text = stringResource(R.string.document_picker))
+            Text(text = stringResource(R.string.calculate_button))
         }
     }
 }
@@ -118,7 +121,8 @@ private fun ExpenseScreenPreview() {
     ItemCalculatorTheme {
         ExpenseScreen(
             onNavigateUp = {},
-            data = "Document path"
+            data = "Document path",
+            onCalculate = {}
         )
     }
 }

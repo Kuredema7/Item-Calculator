@@ -17,17 +17,17 @@ class ItemViewModel: ViewModel() {
     fun loadCsvDataFromInputStream(inputStream: InputStream){
         viewModelScope.launch {
             val rows: List<Map<String,String>> = csvReader().readAllWithHeader(ips = inputStream)
+            items.value = emptyList()
             rows.map { row ->
                 items.update {
                     it + Item(
-                        id = row["NO"]?.toIntOrNull(),
-                        name = row["ITEM"],
-                        quantity = row["QTY"]?.toIntOrNull(),
-                        price = row["PRICE"]?.toDoubleOrNull()
+                        id = row["NO"]?.toInt() ?: 0,
+                        name = row["ITEM"].toString(),
+                        quantity = row["QTY"].toString(),
+                        price = row["PRICE"].toString()
                     )
                 }
             }
         }
     }
-    
 }

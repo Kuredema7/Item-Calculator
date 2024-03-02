@@ -1,7 +1,12 @@
 package com.example.item_calculator.ui.navigation
 
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
+import androidx.core.net.toUri
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
@@ -11,6 +16,9 @@ import com.example.item_calculator.ui.screens.DocumentDestination
 import com.example.item_calculator.ui.screens.DocumentScreen
 import com.example.item_calculator.ui.screens.ExpenseDestination
 import com.example.item_calculator.ui.screens.ExpenseScreen
+import com.example.item_calculator.ui.screens.ItemDestination
+import com.example.item_calculator.ui.screens.ItemScreen
+import com.example.item_calculator.ui.screens.ItemViewModel
 import java.net.URLEncoder
 import java.nio.charset.StandardCharsets
 
@@ -19,6 +27,9 @@ fun ItemNavHost(
     navController: NavHostController,
     modifier: Modifier = Modifier,
 ) {
+    val itemViewModel: ItemViewModel = viewModel()
+    val itemList by itemViewModel.items.collectAsState()
+
     NavHost(
         navController = navController,
         startDestination = DocumentDestination.route,
@@ -47,13 +58,36 @@ fun ItemNavHost(
         ) {
 
             it.arguments?.getString("documentUri")?.let { documentUri ->
+                val context = LocalContext.current
+
                 ExpenseScreen(
                     onNavigateUp = {
                         navController.navigateUp()
                     },
-                    data = documentUri
+                    data = documentUri,
+                    onCalculate = {
+                        val documentUriAsInputStream =
+                            context.contentResolver.openInputStream(documentUri.toUri())
+
+                        if (documentUriAsInputStream != null) {
+                            itemViewModel.loadCsvDataFromInputStream(documentUriAsInputStream)
+                        }
+
+                        navController.navigate(ItemDestination.route)
+                    }
                 )
             }
+        }
+
+        composable(
+            route = ItemDestination.route
+        ) {
+            ItemScreen(
+                onNavigateUp = {
+                    navController.navigateUp()
+                },
+                items = itemList
+            )
         }
     }
 }

@@ -1,8 +1,8 @@
 package com.example.item_calculator.data
 
 data class Item(
-    val id: Int? = null,
-    val name: String? = null,
-    val quantity: Int? = null,
-    val price: Double? = null
+    val id: Int = 0,
+    val name: String = "",
+    val quantity: String = "",
+    val price: String = ""
 )

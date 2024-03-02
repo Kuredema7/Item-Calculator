@@ -1,6 +1,7 @@
 <resources>
     <string name="app_name">Item-Calculator</string>
     <string name="document_picker">Select Document</string>
+    <string name="calculate_button">Calculate</string>
     <string name="back_button">Back</string>
     <string name="document_upload">Document upload</string>
     <string name="quantity_label">Quantity</string>
@@ -9,4 +10,5 @@
     <string name="price_label">Price</string>
     <string name="total_label">Total</string>
     <string name="item_label">Item</string>
+    <string name="item_screen_title">Item Details</string>
 </resources>
