@@ -15,7 +15,8 @@ class ExpenseViewModel: ViewModel() {
     fun onExpenseChange(newExpense: String) {
         _uiState.update { currentState ->
             currentState.copy(
-                expense = decimalFormatter.cleanup(newExpense)
+                expense = decimalFormatter.cleanup(newExpense),
+                isEntryValid = newExpense.isNotBlank()
             )
         }
     }
@@ -23,5 +24,6 @@ class ExpenseViewModel: ViewModel() {
 }
 
 data class ExpenseUiState(
-    val expense: String = ""
+    val expense: String = "",
+    val isEntryValid: Boolean = false
 )

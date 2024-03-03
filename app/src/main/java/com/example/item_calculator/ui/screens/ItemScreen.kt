@@ -28,15 +28,16 @@ import com.example.item_calculator.ui.theme.ItemCalculatorTheme
 object ItemDestination : NavigationDestination {
     override val route = "item"
     override val titleRes = R.string.item_screen_title
-    //const val DOCUMENT_URI_ARG = "documentUri"
-    //val routeWithArgs = "$route/{$DOCUMENT_URI_ARG}"
+    const val EXPENSE_ARG = "expense"
+    val routeWithArgs = "$route/{$EXPENSE_ARG}"
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ItemScreen(
     onNavigateUp: () -> Unit,
-    items: List<Item>
+    items: List<Item>,
+    expense: Double
 ) {
     Scaffold(
         topBar = {
@@ -50,15 +51,17 @@ fun ItemScreen(
             items = items,
             modifier = Modifier
                 .padding(innerPadding)
-                .padding(dimensionResource(R.dimen.medium_padding))
+                .padding(dimensionResource(R.dimen.medium_padding)),
+            expense = expense
         )
     }
 }
 
 @Composable
-fun ItemList(
+private fun ItemList(
     modifier: Modifier = Modifier,
-    items: List<Item>
+    items: List<Item>,
+    expense: Double
 ) {
     LazyColumn(
         modifier = modifier
@@ -66,7 +69,8 @@ fun ItemList(
         items(items) { item ->
             ItemCard(
                 item = item,
-                modifier = Modifier.padding(dimensionResource(R.dimen.medium_padding))
+                modifier = Modifier.padding(dimensionResource(R.dimen.medium_padding)),
+                expense = expense
             )
         }
     }
@@ -75,7 +79,8 @@ fun ItemList(
 @Composable
 private fun ItemCard(
     modifier: Modifier = Modifier,
-    item: Item
+    item: Item,
+    expense: Double
 ) {
     Card(
         modifier = modifier,
@@ -101,7 +106,8 @@ private fun ItemCard(
                 modifier = Modifier.fillMaxWidth(),
                 quantity = item.quantity,
                 price = item.price,
-                total = item.quantity.toDouble().times(item.price.toDouble())
+                total = item.getTotalPerItem(),
+                expensePercentage = expense
             )
         }
     }
@@ -110,9 +116,10 @@ private fun ItemCard(
 @Composable
 private fun ItemRow(
     modifier: Modifier = Modifier,
-    quantity: String,
-    price: String,
-    total: Double
+    quantity: Int,
+    price: Double,
+    total: Double,
+    expensePercentage: Double,
 ) {
     Card(
         modifier = modifier,
@@ -132,19 +139,25 @@ private fun ItemRow(
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
                 Text(text = stringResource(id = R.string.quantity_label))
-                Text(text = quantity)
+                Text(text = quantity.toString())
             }
             Column(
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
                 Text(text = stringResource(id = R.string.price_label))
-                Text(text = price)
+                Text(text = price.toString())
             }
             Column(
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
                 Text(text = stringResource(id = R.string.total_label))
                 Text(text = total.toString())
+            }
+            Column(
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
+                Text(text = stringResource(id = R.string.expense_percentage_label))
+                Text(text = "$expensePercentage%")
             }
         }
     }
@@ -155,9 +168,10 @@ private fun ItemRow(
 private fun ItemRowPreview() {
     ItemCalculatorTheme {
         ItemRow(
-            quantity = "38",
-            price = "47",
-            total = (38 * 47).toDouble()
+            quantity = 38,
+            price = 47.9,
+            total = (38 * 47).toDouble(),
+            expensePercentage = String.format("%.2f", (120 / 394.4)).toDouble()
         )
     }
 }
@@ -168,13 +182,14 @@ private fun ItemCardPreview() {
     val item = Item(
         id = 0,
         name = "Paindol",
-        quantity = "38",
-        price = "90"
+        quantity = 38,
+        price = 90.0
     )
     ItemCalculatorTheme {
         ItemCard(
             modifier = Modifier.padding(dimensionResource(R.dimen.medium_padding)),
-            item = item
+            item = item,
+            expense = 120.00
         )
     }
 }

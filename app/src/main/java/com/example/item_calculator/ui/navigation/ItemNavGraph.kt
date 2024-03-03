@@ -1,5 +1,6 @@
 package com.example.item_calculator.ui.navigation
 
+import android.util.Log
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -28,7 +29,7 @@ fun ItemNavHost(
     modifier: Modifier = Modifier,
 ) {
     val itemViewModel: ItemViewModel = viewModel()
-    val itemList by itemViewModel.items.collectAsState()
+    val itemList by itemViewModel.itemList.collectAsState()
 
     NavHost(
         navController = navController,
@@ -64,8 +65,7 @@ fun ItemNavHost(
                     onNavigateUp = {
                         navController.navigateUp()
                     },
-                    data = documentUri,
-                    onCalculate = {
+                    onCalculate = { expenseValue ->
                         val documentUriAsInputStream =
                             context.contentResolver.openInputStream(documentUri.toUri())
 
@@ -73,21 +73,29 @@ fun ItemNavHost(
                             itemViewModel.loadCsvDataFromInputStream(documentUriAsInputStream)
                         }
 
-                        navController.navigate(ItemDestination.route)
+                        navController.navigate("${ItemDestination.route}/$expenseValue")
                     }
                 )
             }
         }
 
         composable(
-            route = ItemDestination.route
+            route = ItemDestination.routeWithArgs,
+            arguments = listOf(navArgument(ItemDestination.EXPENSE_ARG) {
+                type = NavType.StringType
+            })
         ) {
-            ItemScreen(
-                onNavigateUp = {
-                    navController.navigateUp()
-                },
-                items = itemList
-            )
+            it.arguments?.getString("expense")?.let { expenseValue ->
+                Log.d("grand total: ", itemViewModel.getExpensePercentage(expenseValue).toString())
+
+                ItemScreen(
+                    onNavigateUp = {
+                        navController.navigateUp()
+                    },
+                    items = itemList,
+                    expense = itemViewModel.getExpensePercentage(expenseValue)
+                )
+            }
         }
     }
 }

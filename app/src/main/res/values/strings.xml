@@ -11,4 +11,5 @@
     <string name="total_label">Total</string>
     <string name="item_label">Item</string>
     <string name="item_screen_title">Item Details</string>
+    <string name="expense_percentage_label">Expense %</string>
 </resources>

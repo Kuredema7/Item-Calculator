@@ -11,23 +11,35 @@ import java.io.InputStream
 
 class ItemViewModel: ViewModel() {
 
-    var items: MutableStateFlow<List<Item>> = MutableStateFlow(emptyList())
+    var itemList: MutableStateFlow<List<Item>> = MutableStateFlow(emptyList())
         private set
+
+    fun getGrandTotal(): Double {
+        return itemList.value.sumOf { item -> item.quantity.times(item.price) }
+    }
+
+    fun getExpensePercentage(expense: String): Double {
+        return String.format("%.2f", (expense.toDouble().div(getGrandTotal()))).toDouble()
+    }
 
     fun loadCsvDataFromInputStream(inputStream: InputStream){
         viewModelScope.launch {
             val rows: List<Map<String,String>> = csvReader().readAllWithHeader(ips = inputStream)
-            items.value = emptyList()
+            itemList.value = emptyList()
             rows.map { row ->
-                items.update {
+                itemList.update {
                     it + Item(
                         id = row["NO"]?.toInt() ?: 0,
                         name = row["ITEM"].toString(),
-                        quantity = row["QTY"].toString(),
-                        price = row["PRICE"].toString()
+                        quantity = row["QTY"]?.toIntOrNull() ?: 0,
+                        price = row["PRICE"]?.toDoubleOrNull() ?: 0.00
                     )
                 }
             }
         }
     }
+}
+
+fun Item.getTotalPerItem(): Double {
+    return String.format("%.2f", (quantity.times(price))).toDouble()
 }
