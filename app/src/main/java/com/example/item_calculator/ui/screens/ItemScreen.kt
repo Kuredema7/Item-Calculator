@@ -1,5 +1,6 @@
 package com.example.item_calculator.ui.screens
 
+import android.util.Log
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -24,6 +25,7 @@ import com.example.item_calculator.data.Item
 import com.example.item_calculator.ui.components.CustomTopAppBar
 import com.example.item_calculator.ui.navigation.NavigationDestination
 import com.example.item_calculator.ui.theme.ItemCalculatorTheme
+import java.math.BigDecimal
 
 object ItemDestination : NavigationDestination {
     override val route = "item"
@@ -37,7 +39,7 @@ object ItemDestination : NavigationDestination {
 fun ItemScreen(
     onNavigateUp: () -> Unit,
     items: List<Item>,
-    expense: Double
+    expense: BigDecimal
 ) {
     Scaffold(
         topBar = {
@@ -61,7 +63,7 @@ fun ItemScreen(
 private fun ItemList(
     modifier: Modifier = Modifier,
     items: List<Item>,
-    expense: Double
+    expense: BigDecimal
 ) {
     LazyColumn(
         modifier = modifier
@@ -80,7 +82,7 @@ private fun ItemList(
 private fun ItemCard(
     modifier: Modifier = Modifier,
     item: Item,
-    expense: Double
+    expense: BigDecimal
 ) {
     Card(
         modifier = modifier,
@@ -105,10 +107,11 @@ private fun ItemCard(
             ItemRow(
                 modifier = Modifier.fillMaxWidth(),
                 quantity = item.quantity,
-                price = item.price,
-                total = item.getTotalPerItem(),
+                price = item.getPriceWithExpense(expense),
+                total = item.getOldTotalPerItem(),
                 expensePercentage = expense
             )
+            Log.d("expense_percentage", item.getPriceWithExpense(expense).toString())
         }
     }
 }
@@ -117,9 +120,9 @@ private fun ItemCard(
 private fun ItemRow(
     modifier: Modifier = Modifier,
     quantity: Int,
-    price: Double,
-    total: Double,
-    expensePercentage: Double,
+    price: BigDecimal,
+    total: BigDecimal,
+    expensePercentage: BigDecimal,
 ) {
     Card(
         modifier = modifier,
@@ -169,9 +172,9 @@ private fun ItemRowPreview() {
     ItemCalculatorTheme {
         ItemRow(
             quantity = 38,
-            price = 47.9,
-            total = (38 * 47).toDouble(),
-            expensePercentage = String.format("%.2f", (120 / 394.4)).toDouble()
+            price = (47.9).toBigDecimal(),
+            total = (38 * 47).toBigDecimal(),
+            expensePercentage = (120 / 394.4).toBigDecimal()
         )
     }
 }
@@ -183,13 +186,13 @@ private fun ItemCardPreview() {
         id = 0,
         name = "Paindol",
         quantity = 38,
-        price = 90.0
+        price = (90.0).toBigDecimal()
     )
     ItemCalculatorTheme {
         ItemCard(
             modifier = Modifier.padding(dimensionResource(R.dimen.medium_padding)),
             item = item,
-            expense = 120.00
+            expense = (120.00).toBigDecimal()
         )
     }
 }

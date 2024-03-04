@@ -1,6 +1,5 @@
 package com.example.item_calculator.ui.navigation
 
-import android.util.Log
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -86,8 +85,6 @@ fun ItemNavHost(
             })
         ) {
             it.arguments?.getString("expense")?.let { expenseValue ->
-                Log.d("grand total: ", itemViewModel.getExpensePercentage(expenseValue).toString())
-
                 ItemScreen(
                     onNavigateUp = {
                         navController.navigateUp()
