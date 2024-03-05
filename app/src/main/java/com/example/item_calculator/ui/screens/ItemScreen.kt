@@ -1,6 +1,5 @@
 package com.example.item_calculator.ui.screens
 
-import android.util.Log
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -108,10 +107,9 @@ private fun ItemCard(
                 modifier = Modifier.fillMaxWidth(),
                 quantity = item.quantity,
                 price = item.getPriceWithExpense(expense),
-                total = item.getOldTotalPerItem(),
+                total = item.getNewTotalPerItem(expense),
                 expensePercentage = expense
             )
-            Log.d("expense_percentage", item.getPriceWithExpense(expense).toString())
         }
     }
 }

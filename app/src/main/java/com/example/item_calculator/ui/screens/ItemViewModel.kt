@@ -1,6 +1,5 @@
 package com.example.item_calculator.ui.screens
 
-import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.item_calculator.data.Item
@@ -19,15 +18,14 @@ class ItemViewModel : ViewModel() {
 
     private fun getGrandTotal(): BigDecimal {
         return itemList.value.sumOf { item ->
-            item.price.multiply(BigDecimal(item.quantity.toString()))
+            item.price.multiply(BigDecimal.valueOf(item.quantity.toLong()))
         }
     }
 
     fun getExpensePercentage(expense: String): BigDecimal {
         return BigDecimal(
             expense.toDouble().div(getGrandTotal().toDouble()).toString()
-        ).setScale(2, RoundingMode.CEILING)
-        //return String.format("%.2f", (expense.toDouble().div(getGrandTotal()))).toDouble()
+        ).setScale(3, RoundingMode.HALF_UP)
     }
 
     fun loadCsvDataFromInputStream(inputStream: InputStream) {
@@ -49,11 +47,15 @@ class ItemViewModel : ViewModel() {
 }
 
 fun Item.getOldTotalPerItem(): BigDecimal {
-    return price.multiply(BigDecimal(quantity.toString())).setScale(2, RoundingMode.UP)
+    return price.multiply(quantity.toBigDecimal()).setScale(3, RoundingMode.HALF_UP)
 }
 
 fun Item.getPriceWithExpense(expensePercentage: BigDecimal): BigDecimal {
-    val expensePrice = price.multiply(BigDecimal(expensePercentage.toString()))
-    Log.d("Expense Price", expensePrice.toString())
-    return price.plus(expensePrice).setScale(2, RoundingMode.UP)
+    val expensePrice = price.multiply(expensePercentage)
+    return price.add(expensePrice).setScale(2, RoundingMode.HALF_UP)
+}
+
+fun Item.getNewTotalPerItem(expensePercentage: BigDecimal): BigDecimal {
+    val priceWithExpense = getPriceWithExpense(expensePercentage)
+    return priceWithExpense.multiply(quantity.toBigDecimal()).setScale(2, RoundingMode.HALF_UP)
 }

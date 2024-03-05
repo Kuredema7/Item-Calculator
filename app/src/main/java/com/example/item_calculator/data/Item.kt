@@ -6,5 +6,5 @@ data class Item(
     val id: Int = 0,
     val name: String = "",
     val quantity: Int = 0,
-    val price: BigDecimal = BigDecimal("0.00")
+    val price: BigDecimal = BigDecimal.valueOf(0.0)
 )
