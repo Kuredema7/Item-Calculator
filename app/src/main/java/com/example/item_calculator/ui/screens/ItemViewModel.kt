@@ -19,7 +19,7 @@ class ItemViewModel : ViewModel() {
     private fun getGrandTotal(): BigDecimal {
         return itemList.value.sumOf { item ->
             item.price.multiply(BigDecimal.valueOf(item.quantity.toLong()))
-        }
+        }.setScale(3, RoundingMode.HALF_UP)
     }
 
     fun getExpensePercentage(expense: String): BigDecimal {
