@@ -11,6 +11,8 @@ import java.io.InputStream
 import java.math.BigDecimal
 import java.math.RoundingMode
 
+private const val DECIMAL_PLACE_SCALE = 3
+
 class ItemViewModel : ViewModel() {
 
     var itemList: MutableStateFlow<List<Item>> = MutableStateFlow(emptyList())
@@ -19,13 +21,19 @@ class ItemViewModel : ViewModel() {
     private fun getGrandTotal(): BigDecimal {
         return itemList.value.sumOf { item ->
             item.price.multiply(BigDecimal.valueOf(item.quantity.toLong()))
-        }.setScale(3, RoundingMode.HALF_UP)
+        }.setScale(DECIMAL_PLACE_SCALE, RoundingMode.UP)
+    }
+
+    fun getNewGrandTotal(expense: String): BigDecimal {
+        return itemList.value.sumOf { item ->
+            item.getNewTotalPerItem(getExpensePercentage(expense))
+        }
     }
 
     fun getExpensePercentage(expense: String): BigDecimal {
         return BigDecimal(
             expense.toDouble().div(getGrandTotal().toDouble()).toString()
-        ).setScale(3, RoundingMode.HALF_UP)
+        ).setScale(DECIMAL_PLACE_SCALE, RoundingMode.HALF_UP)
     }
 
     fun loadCsvDataFromInputStream(inputStream: InputStream) {
@@ -47,15 +55,15 @@ class ItemViewModel : ViewModel() {
 }
 
 fun Item.getOldTotalPerItem(): BigDecimal {
-    return price.multiply(quantity.toBigDecimal()).setScale(3, RoundingMode.HALF_UP)
+    return price.multiply(quantity.toBigDecimal()).setScale(DECIMAL_PLACE_SCALE, RoundingMode.UP)
 }
 
 fun Item.getPriceWithExpense(expensePercentage: BigDecimal): BigDecimal {
     val expensePrice = price.multiply(expensePercentage)
-    return price.add(expensePrice).setScale(2, RoundingMode.HALF_UP)
+    return price.add(expensePrice).setScale(DECIMAL_PLACE_SCALE, RoundingMode.UP)
 }
 
 fun Item.getNewTotalPerItem(expensePercentage: BigDecimal): BigDecimal {
     val priceWithExpense = getPriceWithExpense(expensePercentage)
-    return priceWithExpense.multiply(quantity.toBigDecimal()).setScale(2, RoundingMode.HALF_UP)
+    return priceWithExpense.multiply(quantity.toBigDecimal()).setScale(DECIMAL_PLACE_SCALE, RoundingMode.UP)
 }

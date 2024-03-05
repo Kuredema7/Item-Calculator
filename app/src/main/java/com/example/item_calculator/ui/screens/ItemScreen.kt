@@ -38,7 +38,9 @@ object ItemDestination : NavigationDestination {
 fun ItemScreen(
     onNavigateUp: () -> Unit,
     items: List<Item>,
-    expense: BigDecimal
+    expensePercentage: BigDecimal,
+    expense: String,
+    grandTotal: BigDecimal
 ) {
     Scaffold(
         topBar = {
@@ -48,13 +50,26 @@ fun ItemScreen(
             )
         }
     ) { innerPadding ->
-        ItemList(
-            items = items,
-            modifier = Modifier
-                .padding(innerPadding)
-                .padding(dimensionResource(R.dimen.medium_padding)),
-            expense = expense
-        )
+        Column(
+            modifier = Modifier.padding(innerPadding),
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = dimensionResource(R.dimen.medium_padding)),
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Text(text = "Expense: $$expense", modifier = Modifier.weight(1f))
+                Text(text = "Grand total: $$grandTotal")
+            }
+            ItemList(
+                items = items,
+                modifier = Modifier
+                    .padding(dimensionResource(R.dimen.medium_padding)),
+                expense = expensePercentage
+            )
+        }
     }
 }
 

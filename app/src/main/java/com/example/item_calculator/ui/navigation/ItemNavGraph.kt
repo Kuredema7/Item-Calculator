@@ -90,7 +90,9 @@ fun ItemNavHost(
                         navController.navigateUp()
                     },
                     items = itemList,
-                    expense = itemViewModel.getExpensePercentage(expenseValue)
+                    expensePercentage = itemViewModel.getExpensePercentage(expenseValue),
+                    expense = expenseValue,
+                    grandTotal = itemViewModel.getNewGrandTotal(expenseValue)
                 )
             }
         }
