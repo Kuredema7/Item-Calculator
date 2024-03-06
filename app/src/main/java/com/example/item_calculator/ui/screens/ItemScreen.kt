@@ -22,6 +22,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import com.example.item_calculator.R
 import com.example.item_calculator.data.Item
 import com.example.item_calculator.ui.components.CustomTopAppBar
+import com.example.item_calculator.ui.components.DecimalFormatter
 import com.example.item_calculator.ui.navigation.NavigationDestination
 import com.example.item_calculator.ui.theme.ItemCalculatorTheme
 import java.math.BigDecimal
@@ -40,7 +41,8 @@ fun ItemScreen(
     items: List<Item>,
     expensePercentage: BigDecimal,
     expense: String,
-    grandTotal: BigDecimal
+    grandTotal: BigDecimal,
+    decimalFormatter: DecimalFormatter = DecimalFormatter()
 ) {
     Scaffold(
         topBar = {
@@ -60,8 +62,11 @@ fun ItemScreen(
                     .padding(horizontal = dimensionResource(R.dimen.medium_padding)),
                 verticalAlignment = Alignment.CenterVertically
             ) {
-                Text(text = "Expense: $$expense", modifier = Modifier.weight(1f))
-                Text(text = "Grand total: $$grandTotal")
+                Text(
+                    text = "Expense: ${decimalFormatter.formatCurrency(expense.toBigDecimal())}",
+                    modifier = Modifier.weight(1f)
+                )
+                Text(text = "Grand total: ${decimalFormatter.formatCurrency(grandTotal)}")
             }
             ItemList(
                 items = items,
@@ -136,6 +141,7 @@ private fun ItemRow(
     price: BigDecimal,
     total: BigDecimal,
     expensePercentage: BigDecimal,
+    decimalFormatter: DecimalFormatter = DecimalFormatter()
 ) {
     Card(
         modifier = modifier,
@@ -161,19 +167,19 @@ private fun ItemRow(
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
                 Text(text = stringResource(id = R.string.price_label))
-                Text(text = price.toString())
+                Text(text = decimalFormatter.formatCurrency(price))
             }
             Column(
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
                 Text(text = stringResource(id = R.string.total_label))
-                Text(text = total.toString())
+                Text(text = decimalFormatter.formatCurrency(total))
             }
             Column(
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
                 Text(text = stringResource(id = R.string.expense_percentage_label))
-                Text(text = "$expensePercentage%")
+                Text(text = decimalFormatter.formatCurrency(expensePercentage))
             }
         }
     }

@@ -1,11 +1,17 @@
 package com.example.item_calculator.ui.components
 
+import java.math.BigDecimal
 import java.text.DecimalFormatSymbols
+import java.text.NumberFormat
 
 class DecimalFormatter(
     symbols: DecimalFormatSymbols = DecimalFormatSymbols.getInstance()
 ) {
     private val decimalSeparator = symbols.decimalSeparator
+
+    fun formatCurrency(amount: BigDecimal):String{
+        return NumberFormat.getCurrencyInstance().format(amount).format("%.2f", amount)
+    }
 
     fun cleanup(input: String): String {
 
